@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.test.board.dao.ContentDao;
 import com.test.board.domain.ContentVO;
+import com.test.board.domain.ReplyList;
 import com.test.board.domain.ReplyVO;
 
 @Service
@@ -76,7 +77,7 @@ public class ContentServiceImpl implements ContentService{
 	}
 
 	@Override
-	public List<ReplyVO> repList(int cid) {
+	public List<ReplyList> repList(int cid) {
 		return contentDao.repList(cid);
 	}
 

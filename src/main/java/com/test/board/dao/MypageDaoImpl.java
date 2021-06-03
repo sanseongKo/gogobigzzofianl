@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.plaf.synth.SynthSeparatorUI;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -100,7 +102,13 @@ public class MypageDaoImpl implements MypageDao{
 	
 	//Ui로 Member 구하기 -> 판매자 이름 구할때 쓰임 
 	public MemberVO selectFromUi (int uid) {
+		System.out.println(uid);
+		//return sqlSessionTemplate.selectOne("selectFromUi",uid);
+		MemberVO mem = sqlSessionTemplate.selectOne("selectFromUi",uid);
+		System.out.println(mem.getNickname());
 		return sqlSessionTemplate.selectOne("selectFromUi",uid);
+		
+		
 	}
 	
 	

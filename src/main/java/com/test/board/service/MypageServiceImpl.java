@@ -89,6 +89,7 @@ public class MypageServiceImpl implements MypageService{
 	
 	//Ui로 Member 구하기 -> 판매자 이름 구할때 쓰임 
 	public MemberVO selectFromUi (int uid) {
+		System.out.println(uid);
 		return mypageDao.selectFromUi(uid);
 	}
 	

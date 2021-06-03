@@ -10,6 +10,7 @@
 	<typeAliases>
 		<typeAlias type="com.test.board.domain.ContentVO" alias="ContentVO" />
 		<typeAlias type="com.test.board.domain.ReplyVO" alias="ReplyVO" />
+		<typeAlias type="com.test.board.domain.ReplyList" alias="ReplyList" />
 		<typeAlias type="com.test.board.domain.MessageVO" alias="MessageVO" />
 		<typeAlias type="com.test.board.domain.MemberVO" alias="memberVO" />
 		<typeAlias type="com.test.board.domain.VendorVO" alias="VendorVO"/>

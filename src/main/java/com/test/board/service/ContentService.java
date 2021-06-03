@@ -3,6 +3,7 @@ package com.test.board.service;
 import java.util.List;
 
 import com.test.board.domain.ContentVO;
+import com.test.board.domain.ReplyList;
 import com.test.board.domain.ReplyVO;
 
 public interface ContentService {
@@ -40,7 +41,7 @@ public interface ContentService {
 
 	// 댓글 기능
 
-	public abstract List<ReplyVO> repList(int cid);
+	public abstract List<ReplyList> repList(int cid);
 
 	public abstract void repInsert(ReplyVO replyVO);
 

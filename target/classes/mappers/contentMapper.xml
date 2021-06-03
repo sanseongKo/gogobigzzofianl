@@ -89,10 +89,12 @@
 	<!-- 댓글 쿼리 -->
 	
 	<!-- 댓글 리스트 -->
-	<select id="repList" resultType="ReplyVO"> 
-	<![CDATA[ select "RID", "UID", "CID", "REPCONTENT", "REPDATE"
-			from REPLY where "CID" = #{cid} order by "REPDATE" desc ]]>
+	<select id="repList" resultType="ReplyList"> 
+		<![CDATA[ SELECT B."UID", B."REPCONTENT", B."REPDATE", A."NICKNAME" 
+			FROM MEMBER A , REPLY B 
+			WHERE A."UID"= B."UID" AND B."CID"=#{cid}]]>
 	</select>
+	
 	
 	<!-- 댓글 입력 -->
 	<insert id="repInsert"> 

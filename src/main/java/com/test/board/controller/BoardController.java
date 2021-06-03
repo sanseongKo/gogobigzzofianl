@@ -354,36 +354,39 @@ public class BoardController {
 		
 
 		ContentVO contentVO = contentService.select(cid);
-		
+		//해당 컨텐츠
 		model.addAttribute("contentVO", contentVO);
 		
+		// 댓글
 		model.addAttribute("repList", contentService.repList(cid));
 		model.addAttribute("replyVO", new ReplyVO());
 		
-
+		// 판매자 이름 
+		int uid = contentVO.getUid();
+		MemberVO member = mypageService.selectFromUi(uid);
+		model.addAttribute("VendorNickname",member.getNickname());
+		
+		
+		
 		//오프라인 일때, 예약날짜list-> dayList 필요
 		if (contentVO.getOn_off()==2) {
-			//1. 우선 상품번호(cid)로  DB에서 예약일자를 ResDays객체에 담은 list로 받아온다.
+		//1. 우선 상품번호(cid)로  DB에서 예약일자를 ResDays객체에 담은 list로 받아온다.
 			//	[ResDays, Resdays ....]
 			List<ResDays> tmp = boardService.getDays(cid);
 					
-			//2. ResDays 객체 리스트 tmp를 
+		//2. ResDays 객체 리스트 tmp를 
 			// 	 예약 api가 사용할 수 있는 ["2021-06-05","2021-06-06"] 형태로 변환해준다. 
 			List<String> dayList = new ArrayList<>();
 			for (ResDays str : tmp) {						
 				dayList.add('\"'+str.getResday().substring(0,10)+'\"');
 			}
 				
-			//3. dayList 확인 
+		//3. dayList 확인 
 			System.out.println("dayList : "+dayList.toString());
 			model.addAttribute("dayList", dayList);//list
 		}
 				
 		
-		//판매자 이름
-		int uid = contentVO.getUid();
-		MemberVO member = mypageService.selectFromUi(uid);
-		model.addAttribute("VendorNickname",member.getNickname());
 		
 		return "/board/read";
 	}
@@ -392,7 +395,7 @@ public class BoardController {
 	
 	
 	
-	// 글 읽기 + 댓글 등록 요청
+	// 글 읽기 + 댓글 등록요청
 	@RequestMapping(value = "/contentRead/{cid}", method = RequestMethod.POST) // 페이지 링크 값 c:url value="/board/read/${board.seq}" 글 읽기
 	public String read(@PathVariable int cid, ReplyVO replyVO, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) { // 사용자가 입력한 값 중 타입이 맞지 않거나 null 값인 경우 예외처리
@@ -401,8 +404,6 @@ public class BoardController {
 		contentService.repInsert(replyVO);
 		return "redirect:/contentRead/{cid}";
 	}
-
-	
 	
 	//Ajax 요청받는 메서드 
 		@RequestMapping(value="/content/getPersonNumber", method=RequestMethod.GET)

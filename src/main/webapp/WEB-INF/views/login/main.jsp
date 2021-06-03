@@ -31,7 +31,7 @@
 				<input type="password" id="pwd" name="pwd"
 					class="w3-input w3-border" placeholder="비밀번호">
 				<br>
-				<input type="submit" value="로그인" >
+				<input type="submit" value="로그인" onclick="#">
 				<br>
 
 				<br>

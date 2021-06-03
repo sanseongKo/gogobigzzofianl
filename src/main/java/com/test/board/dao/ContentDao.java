@@ -3,6 +3,7 @@ package com.test.board.dao;
 import java.util.List;
 
 import com.test.board.domain.ContentVO;
+import com.test.board.domain.ReplyList;
 import com.test.board.domain.ReplyVO;
 
 public interface ContentDao {
@@ -42,7 +43,11 @@ public interface ContentDao {
 	// 댓글(후기) 기능
 
 	// 댓글 리스트
-	public abstract List<ReplyVO> repList(int cid);
+	//public abstract List<ReplyVO> repList(int cid);
+	public abstract List<ReplyList> repList(int cid);
+	
+
+	
 	// 댓글 입력
 	public abstract void repInsert(ReplyVO replyVO);
 	// 댓글 수정

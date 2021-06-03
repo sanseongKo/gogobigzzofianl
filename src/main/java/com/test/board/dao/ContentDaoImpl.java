@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.test.board.domain.ContentVO;
+import com.test.board.domain.ReplyList;
 import com.test.board.domain.ReplyVO;
 
 @Repository
@@ -98,7 +99,7 @@ public class ContentDaoImpl implements ContentDao{
 	// 댓글기능
 
 	@Override
-	public List<ReplyVO> repList(int cid) {
+	public List<ReplyList> repList(int cid) {
 		return sqlSessionTemplate.selectList("repList", cid);
 	}
 

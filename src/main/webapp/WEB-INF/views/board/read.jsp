@@ -1,3 +1,7 @@
+<%@ page import="com.test.board.service.MypageService" %>
+<%@ page import="com.test.board.service.MypageServiceImpl" %>
+<%@ page import="com.test.board.domain.MemberVO" %>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -63,7 +67,7 @@
 
 				<tr>
 					<th>내용</th>
-					<td><textarea name="content" cols="40" rows="10">${contentVO.content}</textarea></td>
+					<td width="500" height="400">${contentVO.content}</td>
 				</tr>
 
 				<tr>
@@ -109,8 +113,8 @@
 			</c:when>
 			<c:otherwise>
 				<!-- 판매자 및 구매자일 경우		:	 목록 버튼만 -->
-				<button onClick="location.href='<c:url value="/edit/${contentVO.cid}"/>'">수정</button>
-				<button onClick="location.href='<c:url value="/delete/${contentVO.cid}"/>'">삭제</button>
+				<button onClick="location.href='<c:url value="/edit/${contentVO.cid}"/>'">수정a</button>
+				<button onClick="location.href='<c:url value="/delete/${contentVO.cid}"/>'">삭제a</button>
 				<button onClick="history.go(-1)">이전 목록</button>
 			</c:otherwise>
 		</c:choose>
@@ -118,7 +122,9 @@
 	
 	<div>
 		<form:form commandName="replyVO" method="POST">
+		
 			<%@ include file="/WEB-INF/views/reply/repWrite.jsp" %>
+			
 		</form:form>
 	</div>
 	
