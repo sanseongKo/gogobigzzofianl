@@ -13,48 +13,57 @@
 
 	<%@ include file="/WEB-INF/views/mypage/test.jsp" %>
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-						<br>
-						<h2>준비중입니다*^^*<h2>
+					
 				<div class="container">
 					<div class="row">
 						<table border="1">
+			<tr>
+						<th style="border: 1px solid #444444;">NO</th>
+						<th style="border: 1px solid #444444;">후기상품</th>
+						<th style="border: 1px solid #444444;">후기내용</th>
+						<th style="border: 1px solid #444444;">등록일자</th>
+						<th style="border: 1px solid #444444;"> </th>
+						
+			
+				</tr>
+	
+	
+<div>	
+	<% int count = 1; %>
+		<c:forEach var="reply" items="${repList}" varStatus="loop">
 	<div>
-		<c:forEach var="reply" items="${replylist}" varStatus="loop">
-			<div style='width: 20%; float: left'>
-				<table border="1">
+			
 					<tr>
-						<td>${reply.rid}</td>
-					</tr>
-					<tr>
-						<td>${reply.uid}</td>
-					</tr>
-					<tr>
-						<td>${reply.cid}</td>
-					</tr>
-					<tr>
+						<td><%=count++ %></td>
+					
+				
+						<td>${reply.title}</td>
+					
+					
 						<td>${reply.repcontent}</td>
-					</tr>
-					<tr>
+					
+					
 						<td>${reply.repdate}</td>
+						
+						<td>  <button onClick="location.href='<c:url value="/mypage/repDelete/${reply.rid}"/>'">삭제</button>  </td>
+						
 					</tr>
 
 				
 			</div>
 		</c:forEach>
+				</table>
+		
 	</div>
-	</table>
-				</div>
 	
-			</div>
 	
 	
 			</main>
 
-	
-	
-	
+			
 		</div>
 	</div>
+	
 	
 </body>
 

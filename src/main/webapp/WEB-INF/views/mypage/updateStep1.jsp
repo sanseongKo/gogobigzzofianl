@@ -13,7 +13,7 @@
 
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 
-<form action="/board/updateStep2" method="post">
+<form action="/board/mypage/updateStep2" method="post">
 	<br><br>비밀번호 확인 : <input type="password" name="password">
 <input type="submit" value="확인">
 </form>

@@ -1,11 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
 
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
+<% int count=1; %>
 <title>지역별 리스트</title>
 </head>
 <body>
@@ -18,8 +20,6 @@
 		<a href="<c:url value="/onofflist?on_off=1" />">온라인</a> / <a
 			href="<c:url value="/onofflist?on_off=2" />">오프라인</a>
 	</div>
-	
-	<br><br><a href="<c:url value="/write"/>">새글</a>
 	
 	<br><br>
 	<div>
@@ -47,18 +47,18 @@
 					<c:choose>
 						<c:when test="${board.cthumbnail ne null}">
 							<tr>
-								<td><img src="${board.cthumbnail}" width=100 height=100></td>
+	            		<td><img src="<spring:url value="/image/${board.cthumbnail}"/>" style="width: 150px; height: 150px" /></td>
 							</tr>
 						</c:when>
 						<c:otherwise>
 							<tr>
-								<td><img src="/board/resources/images/basicPic.jpg"
-									width=100 height=100></td>
+								<td><img src="/board/resources/images/basicPic.jpg" width=100 height=100></td>
+
 							</tr>
 						</c:otherwise>
 					</c:choose>
 					<tr>
-						<td>${board.cid}</td>
+						<td><%=count++ %></td>
 					</tr>
 					<tr>
 						<td><a href="<c:url value="/contentRead/${board.cid}" />">${board.title}
@@ -78,10 +78,7 @@
 			</div>
 		</c:forEach>
 	</div>
-	
-	<div>
-		<a href="<c:url value="/write" />">새 글</a>
-	</div>
+
 	
 </body>
 

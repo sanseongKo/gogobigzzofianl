@@ -39,6 +39,8 @@
 	
 	</select>
 	
+	
+	
 	<select id="areaList" resultType="ContentVO"> 
 	<![CDATA[ select "CID", "BIG_NAME", "SMALL_NAME", "UID", "ON_OFF", "ATT_NUM", "PRICE", "AREA",
 				"TITLE", "CONTENT", "VIDEO", "VTHUMBNAIL", "CTHUMBNAIL", "PIC_CONTENT", "FILE_NAME", "CONDATE"
@@ -47,13 +49,15 @@
 
 
 
+
 	
 	<!-- 글 등록 -->
-	<insert id="formInsert"> 
+	<!-- 글 등록 -->
+	<insert id="upContent"> 
 		insert into "CONTENTS" ("CID", "BIG_NAME", "SMALL_NAME", "UID", "ON_OFF", "ATT_NUM", "PRICE", "AREA",
 					"TITLE", "CONTENT", "VIDEO", "VTHUMBNAIL", "CTHUMBNAIL", "PIC_CONTENT", "FILE_NAME", "CONDATE")
 		values(CID_SEQ.nextval, #{big_name}, #{small_name}, #{uid}, #{on_off}, #{att_num}, #{price}, #{area}, 
-				#{title}, #{content}, #{video}, #{vthumbnail}, #{cthumbnail}, #{pic_content}, #{file_name}, sysdate)
+				#{title}, #{content}, #{video}, #{vthumbnail}, #{cthumbnail}, 11, 11, sysdate)
 	</insert>
 	
 	<insert id="classInsert"> 
@@ -79,27 +83,37 @@
 		where CID = #{cid}
 	</update>
 	
+	
 	<!-- 글 삭제 -->
-	<delete id="delete"> 
+	<delete id="deleteCon" parameterType="Integer"> 
 		delete from "CONTENTS" where "CID" = #{cid}
 	</delete>
 	
-	
-	
-	<!-- 댓글 쿼리 -->
-	
-	<!-- 댓글 리스트 -->
-	<select id="repList" resultType="ReplyList"> 
-		<![CDATA[ SELECT B."UID", B."REPCONTENT", B."REPDATE", A."NICKNAME" 
-			FROM MEMBER A , REPLY B 
-			WHERE A."UID"= B."UID" AND B."CID"=#{cid}]]>
+	<select id="manageList" resultType="contentVO">
+	SELECT B."BIG_NAME", B."SMALL_NAME", B."ON_OFF", A."NICKNAME", B."ATT_NUM", B."PRICE", B."CONDATE", B."TITLE", B."CID"
+               FROM MEMBER A , CONTENTS B WHERE A."UID"= B."UID"
 	</select>
 	
+	<select id="manageListByVendor" parameterType="String" resultType="contentVO">
+	SELECT B."BIG_NAME", B."SMALL_NAME", B."ON_OFF", A."NICKNAME", B."ATT_NUM", B."PRICE", B."CONDATE", B."TITLE", B."CID"
+               FROM MEMBER A , CONTENTS B WHERE A."UID"= B."UID" AND "NICKNAME" LIKE '%'||#{search}||'%'
+	</select>
+	<!-- 댓글 쿼리 -->
+	
+	<!-- 비동기 페이징 댓글 리스트 -->
+	<select id="repList" resultType="ReplyList" parameterType="PageRow"> 
+		<![CDATA[select * from (select rownum rnum, "UID", "REPCONTENT", "REPDATE", "NICKNAME", "RID" from 
+				(select * from (
+  					SELECT B."UID", B."REPCONTENT", B."REPDATE", A."NICKNAME", B."RID"
+					FROM MEMBER A , REPLY B 
+					WHERE A."UID"= B."UID" AND B."CID"=#{cid})      
+   				order by "REPDATE" desc ) ) where rnum>=#{startRow} and rnum<=#{endRow}]]>
+	</select>
 	
 	<!-- 댓글 입력 -->
-	<insert id="repInsert"> 
-		insert into "REPLY" ("RID", "UID", "CID", "REPCONTENT", "REPDATE") 
-		values( RID_SEQ.nextval, #{UID}, #{CID}, #{repcontent}, sysdate)
+	<insert id="repInsert" parameterType="ReplyVO"> 
+		insert into "REPLY" ("RID", "UID", "CID", "REPCONTENT") 
+		values( REPLY_SEQ.nextval, #{uid}, #{cid}, #{repcontent})
 	</insert>
 	
 	<!-- 댓글 수정 -->
@@ -112,6 +126,16 @@
 		delete from REPLY where "RID" = #{rid}
 	</delete>
 	
+	
+	<select id="repCount" resultType="int">
+		<![CDATA[select count(*) from REPLY where "CID"=#{cid}]]>  
+	</select>
+	
+	<!-- 주문한 상품에만 후기를 남길 수 있도록 확인  -->
+	<select id="repCheck" resultType="int" parameterType="RepCheck">
+		<![CDATA[select count(*) from ORDER2 where "CID"=#{cid} and "UID"=#{uid} ]]>  
+	</select>
+
 	
 
 

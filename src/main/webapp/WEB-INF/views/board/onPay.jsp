@@ -7,7 +7,7 @@
 <form action="/board/payStep1" method="post" onSubmit="goStep1(lastAmount)">
 <!-- <form action="${pageContext.request.contextPath}/reserveComplete" method="post"> -->
 <div class="reservation">
-  	<p>결제정보 </p>
+  	<h2>결제정보</h2>
 
   	<br>
   

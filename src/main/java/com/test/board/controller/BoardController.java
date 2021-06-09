@@ -7,9 +7,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +17,7 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.websocket.server.PathParam;
 
 import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
@@ -38,15 +36,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.github.scribejava.core.model.OAuth2AccessToken;
+import com.test.board.dao.LoginDao;
 import com.test.board.dao.RegisterDao;
 import com.test.board.domain.ContentVO;
 import com.test.board.domain.MemberVO;
+import com.test.board.domain.PageRow;
+import com.test.board.domain.RepCheck;
+import com.test.board.domain.ReplyList;
 import com.test.board.domain.ReplyVO;
 import com.test.board.domain.ResDays;
+import com.test.board.login.KakaoRegService;
 import com.test.board.login.KakaoService;
-
 import com.test.board.login.NaverLoginBO;
 import com.test.board.service.BoardService;
 import com.test.board.service.ContentService;
@@ -55,12 +58,14 @@ import com.test.board.service.MypageService;
 @Controller
 @RequestMapping
 public class BoardController {
-	
+	@Autowired
+	private LoginDao loginDao;
 	@Autowired
 	private RegisterDao registerDao;
 	@Autowired
 	private KakaoService kakaoService;	
-
+	@Autowired
+	private KakaoRegService kakaoRegService;
 	@Autowired
 	private NaverLoginBO naverLoginBO;
 	private String apiResult = null;
@@ -91,6 +96,7 @@ public class BoardController {
 	public String login(Model model, HttpSession session) {
 		System.out.println(session);
 		String naverAuthUrl = naverLoginBO.getAuthorizationUrl(session);
+		session.setMaxInactiveInterval(30*60);
 
 		//https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sE***************&
 		//redirect_uri=http%3A%2F%2F211.63.89.90%3A8090%2Flogin_project%2Fcallback&state=e68c269c-5ba9-4c31-85da-54c16c658125
@@ -109,7 +115,22 @@ public class BoardController {
 		
 		return "login/main";
 	}
+	
+	//자체 로그인 
+		@RequestMapping(value="/siteLogin", method = RequestMethod.POST)
+		public String register(@RequestParam String email, HttpSession session) {
+			int check = loginDao.loginCheck(email);
+			if(check == 0) {
+				return "login/regConfirm";
+			}else {
+				MemberVO memberVO = loginDao.login(email);
+				session.setAttribute("sessionId",memberVO); //세션 생성
+				session.setMaxInactiveInterval(30*60);
+			}
 
+			return "list/main";
+			
+		}
 	//네이버 로그인 성공시 callback호출 메소드
 	@RequestMapping(value = "/callback", method = { RequestMethod.GET, RequestMethod.POST })
 	public String navercallback(Model model, @RequestParam String code, @RequestParam String state, HttpSession session) throws IOException, ParseException {
@@ -138,25 +159,81 @@ public class BoardController {
 		String name = (String)response_obj.get("name");
 		System.out.println(nickname+ "," + email + "," + name);
 		//4.파싱 닉네임 세션으로 저장
-		session.setAttribute("sessionId",nickname); //세션 생성
-		model.addAttribute("result", apiResult);
-		session.setAttribute("email", email);
-		session.setAttribute("name", name);
-		return "login/naverReg";
+		int check = loginDao.loginCheck(email);
+		if(check == 0) {
+			return "login/regConfirm";
+		}else {
+			MemberVO memberVO = loginDao.login(email);
+			session.setAttribute("sessionId",memberVO); //세션 생성
+		}
+
+		return "list/main";
 	}
+	//네이버 회원가입
+			@RequestMapping(value = "/callbackReg", method = { RequestMethod.GET, RequestMethod.POST })
+			public String naverCallBackReg(Model model, @RequestParam String code, @RequestParam String state, HttpSession session) throws IOException, ParseException {
+
+				OAuth2AccessToken oauthToken;
+				oauthToken = naverLoginBO.getAccessToken(session, code, state);
+				//1. 로그인 사용자 정보를 읽어온다.
+
+				apiResult = naverLoginBO.getUserProfile(oauthToken); //String형식의 json데이터
+				/** apiResult json 구조
+			   {"resultcode":"00",
+			   "message":"success",
+			   "response":{"id":"33666449","nickname":"shinn****","age":"20-29","gender":"M","email":"sh@naver.com","name":"\uc2e0\ubc94\ud638"}}
+				 **/
+				//2. String형식인 apiResult를 json형태로 바꿈
+				JSONParser parser = new JSONParser();
+				Object obj = parser.parse(apiResult);
+				JSONObject jsonObj = (JSONObject) obj;
+				//3. 데이터 파싱
+				//Top레벨 단계 _response 파싱
+				JSONObject response_obj = (JSONObject)jsonObj.get("response");
+
+				//response의 nickname값 파싱
+				String nickname = (String)response_obj.get("nickname");
+				String email = (String)response_obj.get("email");
+				String name = (String)response_obj.get("name");
+				System.out.println(nickname+ "," + email + "," + name);
+				session.setAttribute("sessionId", email);
+				session.setAttribute("name", name);
+
+				return "login/naverReg";
+			}
 
 	//카카오 로그인
 	@RequestMapping(value = "/kakaoLogin")
-	public String kakaoRegister(@RequestParam(value = "code", required = false) String code, Model model, HttpSession session) throws Exception{
+	public String kakaoLogin(@RequestParam(value = "code", required = false) String code, Model model, HttpSession session) throws Exception{
 
 		String access_Token = kakaoService.getAccessToken(code);
 		HashMap<String, Object> userInfo = kakaoService.getUserInfo(access_Token);
 		String email = (String) userInfo.get("email");
 		String nickname = (String) userInfo.get("nickname");
-		session.setAttribute("sessionId", nickname);
-		session.setAttribute("email", email);
-		return "login/kakaoReg";
-	}	
+		int check = loginDao.loginCheck(email);
+		if(check == 0) {
+			return "login/regConfirm";
+		}else {
+			MemberVO memberVO = loginDao.login(email);
+			session.setAttribute("sessionId",memberVO); //세션 생성
+		}
+
+		return "list/main";
+	}
+	//카카오 회원가입
+			@RequestMapping(value = "/kakaoReg", method=RequestMethod.GET)
+			public String kakaoRegister(@RequestParam(value = "code", required = false) String code, Model model, HttpSession session) throws Exception{
+
+				String access_Token = kakaoRegService.getAccessToken(code);
+				HashMap<String, Object> userInfo = kakaoService.getUserInfo(access_Token);
+				String email = (String) userInfo.get("email");
+				String nickname = (String) userInfo.get("nickname");
+				session.setAttribute("sessionId", email);
+				
+				
+				return "login/kakaoReg";
+			}	
+			
 
 	//로그아웃
 	@RequestMapping(value = "/logout", method = { RequestMethod.GET, RequestMethod.POST })
@@ -166,6 +243,13 @@ public class BoardController {
 		return "redirect:login";
 	}
 	
+	//회원가입 이동
+		@RequestMapping(value="/registerPage", method = RequestMethod.GET)   
+		public String registerPage() {
+
+
+			return "login/regType";
+		}
 	//회원가입 이동
 	@RequestMapping(value="/register", method = RequestMethod.GET)   
 	public String registerGet() {
@@ -275,6 +359,7 @@ public class BoardController {
 
 		List<ContentVO> onofflist = contentService.onoffList(on_off);
 		model.addAttribute("onofflist",onofflist);
+		model.addAttribute("onCheck", on_off);
 
 		return "list/onofflist";
 	}
@@ -321,8 +406,15 @@ public class BoardController {
 	
 	// 지역 리스트
 	@RequestMapping("/arealist")
-	public String arealist(Model model, String area, int on_off) throws Exception{
+	public String arealist(Model model, @RequestParam String area, @RequestParam int on_off) {
+		System.out.println(area+ on_off);
+		
 		List<ContentVO> arealist = contentService.areaList(area, on_off);
+		for (ContentVO contentVO : arealist) {
+			System.out.println("확인"+contentVO.toString());
+			
+		}
+		
 		model.addAttribute("arealist",arealist);
 
 		System.out.println(arealist);
@@ -350,16 +442,19 @@ public class BoardController {
 	// 게시물 클릭시 상세 페이지 
 	// 글 읽기 + 댓글 작성 및 읽기
 	@RequestMapping(value = "/contentRead/{cid}", method = RequestMethod.GET) // 페이지 링크 값 c:url value="/board/read/${board.seq}" 글 읽기
-	public String read(Model model, @PathVariable int cid) {
-		
+	public String read(Model model, @PathVariable int cid,HttpSession session) throws Exception {
+		MemberVO sessionId = mypageService.selectFromUi(21);
+		//
+		//MemberVO sessionId = new MemberVO(46,"고산성", "123", "tkstjd56@naver.com", 1, "산성코", )
+		session.setAttribute("sessionId", sessionId);
 
 		ContentVO contentVO = contentService.select(cid);
 		//해당 컨텐츠
 		model.addAttribute("contentVO", contentVO);
 		
 		// 댓글
-		model.addAttribute("repList", contentService.repList(cid));
-		model.addAttribute("replyVO", new ReplyVO());
+	//	model.addAttribute("repList", contentService.repList(cid));
+	//	model.addAttribute("replyVO", new ReplyVO());
 		
 		// 판매자 이름 
 		int uid = contentVO.getUid();
@@ -386,66 +481,219 @@ public class BoardController {
 			model.addAttribute("dayList", dayList);//list
 		}
 				
-		
+		List<String> imgList = new ArrayList();
+		try {
+			String image[] = boardService.imgList(cid).split("/");
+			for(int i = 0; i<image.length; i++) {
+				imgList.add(image[i]);
+			}
+			model.addAttribute("images", imgList);
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		
 		return "/board/read";
 	}
-
+	
 	
 	
 	
 	
 	// 글 읽기 + 댓글 등록요청
 	@RequestMapping(value = "/contentRead/{cid}", method = RequestMethod.POST) // 페이지 링크 값 c:url value="/board/read/${board.seq}" 글 읽기
-	public String read(@PathVariable int cid, ReplyVO replyVO, BindingResult bindingResult) {
+	public String read(@PathVariable int cid, ReplyVO replyVO, BindingResult bindingResult, HttpSession session) {
 		if (bindingResult.hasErrors()) { // 사용자가 입력한 값 중 타입이 맞지 않거나 null 값인 경우 예외처리
 			return "/board/contentRead";
 		}
+		/*member 추가되면 주석풀기
+		if (session.getAttribute("member")==null) {
+			
+			return "redirect:/needLogin";
+		}
+		*/
 		contentService.repInsert(replyVO);
 		return "redirect:/contentRead/{cid}";
 	}
 	
-	//Ajax 요청받는 메서드 
-		@RequestMapping(value="/content/getPersonNumber", method=RequestMethod.GET)
-		@ResponseBody				//inputcode는 날짜와 cid 
-		public int getPersonNumber(String inputcode, String cid) {
-			
-//			String date = req.getParameter("inputcode");
-//			int cid = Integer.parseInt(req.getParameter("cid"));
-			int cid2 = Integer.parseInt(cid);
-			
-			System.out.println("inputcode: "+ inputcode);
-			System.out.println("cid2: "+ cid2);
-			
-			
-			//List(map<날짜(String), 인원수(int)>)  : 맵을 리스트로 받아옴 
-			List<ResDays> resDays = boardService.getDays(cid2);
-			
-			for (ResDays res : resDays) {
-				String key=res.getResday().substring(0, 10);
-				int value=res.getPerson();
-			
-				System.out.println("key: "+ key +" value: "+ value);
-				if (key.equals(inputcode)) {
-					System.out.println("인원 : "+value);
-					return value;
-				}
+	@RequestMapping(value="/needLogin")
+	public String needLogin() {
 		
-			}
-			return 0;
+		return "payPage/needLogin";
+	}
+	
+	
+
+	
+	// Ajax
+	// 예약일-> 인원 요청받는 메서드 
+	@RequestMapping(value="/content/getPersonNumber", method=RequestMethod.GET)
+	@ResponseBody				//inputcode는 날짜와 cid 
+	public int getPersonNumber(String inputcode, String cid) {
 			
+//		String date = req.getParameter("inputcode");
+//		int cid = Integer.parseInt(req.getParameter("cid"));
+		int cid2 = Integer.parseInt(cid);
+		
+		System.out.println("inputcode: "+ inputcode);
+		System.out.println("cid2: "+ cid2);
+			
+		
+		//List(map<날짜(String), 인원수(int)>)  : 맵을 리스트로 받아옴 
+		List<ResDays> resDays = boardService.getDays(cid2);
+			
+		for (ResDays res : resDays) {
+			String key=res.getResday().substring(0, 10);
+			int value=res.getPerson();
+			
+			System.out.println("key: "+ key +" value: "+ value);
+			if (key.equals(inputcode)) {
+				System.out.println("인원 : "+value);
+				return value;
+			}
+		
+		}
+		return 0;
+			
+	}
+		
+	//Ajax
+	//////댓글가져오기
+	@RequestMapping("/commentlist")
+	   @ResponseBody
+	   public Map<String, Object> getBoardReplyList(
+			   @RequestParam(value = "pageNum", defaultValue = "1", required = false) int pageNum, @RequestParam int cid) throws Exception {
+	      Map<String, Object> result = null;
+	      System.out.println("cid :"+ cid);
+	     //한 페이지에 보여줄 댓글 개수 
+	     int pageSize = 10;
+	     
+	     int currentPage = pageNum;
+	     int startRow = (currentPage - 1)*pageSize +1;
+	     int endRow = currentPage * pageSize;
+	 	 int count = 0;
+	 	 int number = 0;
+	     
+	 	 List<ReplyList> repList = null;
+	 	 
+	 	 //댓글 개수 
+	 	 try {
+	 		result = new HashMap<String, Object>();
+	 		count = contentService.repCount(cid);
+	 	 
+
+	 	 	if (count > 0) {
+	 	 		PageRow pageRow = new PageRow(startRow, endRow, cid);
+	 	 		repList = contentService.repList(pageRow);
+	 	 		number = count - (currentPage -1 )* pageSize;
+	    	 
+	 	 		int pageBlock = 5;	//페이지를 5개씩 표시하고 그 이상은 [이전]과 [다음]으로...
+	 	 		int imsi = count % pageSize == 0 ? 0 : 1;//imsi =1
+	 	 		// 33/10+1 =4
+	 	 		int pageCount= count / pageSize +imsi; //페이지 크기
+	 	 		int startPage=(int)((currentPage -1)/pageBlock)*pageBlock+1;
+	 	 		int endPage=startPage+pageBlock -1;
+	 	 		if(endPage > pageCount) endPage = pageCount;
+	    	 
+	    	 
+	 	 		result.put("repList", repList);
+	 	 		result.put("startPage", startPage);
+	 	 		result.put("endPage", endPage);
+	 	 		result.put("pageNum", pageNum);
+		 		return result;
+
+	 	 	}
+	 	 	
+	 	 }catch(Exception e) {
+	 		 e.printStackTrace();
+	 		
+	 		 
+	 	 }
+	    	 
+ 		 return result;
+
+	      
+	   }
+
+	// Ajax
+	// 로그인 여부 
+	// true = 로그인, false = 로그인x 
+	@RequestMapping(value="/sessionCheck")
+	@ResponseBody
+	public boolean sessionCheck(HttpSession session) {
+		System.out.println("세션 확인하러왔음!");
+		if (session.getAttribute("sessionId")!=null) {
+			return false;
 		}
 		
+		return true;
+	}
+	
+	
+	// Ajax
+	// 댓글 등록
+	@RequestMapping(value="/repRegister")
+	@ResponseBody
+	public boolean repRegister(int uid , int cid, String repcontent) {
+		try {
+			
+			
+			System.out.println("댓글 등록한다! ");
+			ReplyVO reply = new ReplyVO(uid, cid, repcontent);
+			System.out.println(reply.toString());
+			
+			contentService.repInsert(reply);
+			
+			return true;
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		
+	}
 	
 	
 	
+	@RequestMapping(value="/repDelete")
+	@ResponseBody
+	public boolean repDelete(@RequestParam int rid) {
+		//rid로 reply 게시물 지우기 
+		try {
+			System.out.println("삭제 시도");
+			contentService.repDelete(rid);
+			return true;
+		}catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		
+		
+	}
 	
 	
+	// 게시물의 cid와 나의 order.cid와 비교
+	@RequestMapping(value="/uidCheck")
+	@ResponseBody				//@requestParam RepCheck repCheck 로 받아보기 
+	public boolean uidCheck(@RequestParam int uid, @RequestParam int cid) {
 	
-	
-	
-	
-	
+		RepCheck check  = new RepCheck(cid, uid);
+		try {
+			int count = contentService.repCheck(check);
+		
+			if (count > 0 ) {
+				return true;
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+
+		
+	}
 	
 	
 	
@@ -567,71 +815,26 @@ public class BoardController {
 		}
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+///////관리자 게시물 관리
 
-	// 새 글 작성 요청
-	@RequestMapping(value = "/write", method = RequestMethod.GET)
-	public String write(Model model) {
-		model.addAttribute("contentVO", new ContentVO()); // Board 객체를 생성하여 Model에 추가하여 객체가 없을 떄 예외 제거
-		return "/board/write";
-	}
-
-	// 새 글 등록 요청
-	@RequestMapping(value = "/write", method = RequestMethod.POST)
-	public String write(ContentVO contentVO, BindingResult bindingResult) throws Exception {
-		if (bindingResult.hasErrors()) { // 사용자가 입력한 값 중 타입이 맞지 않거나 null 값인 경우 예외처리
-			return "/board/write";
-		}
-		
-		/* 첨부 파일 */
-		String file_name = null;
-		String cthumbnail = null;
-		String pic_content = null;
-		
-		MultipartFile uploadFile = contentVO.getUploadFile();
-		MultipartFile cthumbFile = contentVO.getCthumbFile();
-		MultipartFile picFile = contentVO.getPicFile();
-		
-		System.out.println(uploadFile);
-		System.out.println(cthumbFile);
-		System.out.println(picFile);
-
-		if (!uploadFile.isEmpty()) {
-			String orgFileName = uploadFile.getOriginalFilename();
-			String ext = FilenameUtils.getExtension(orgFileName);
-			UUID uuid = UUID.randomUUID();
-			file_name = uuid + "." + ext;
-			uploadFile.transferTo(new File("D:\\file\\" + file_name));
-			
-		} else {
-			file_name = "";
-		}
-		if (!cthumbFile.isEmpty()) {
-			String orgFileName = cthumbFile.getOriginalFilename();
-			String ext = FilenameUtils.getExtension(orgFileName);
-			UUID uuid = UUID.randomUUID();
-			cthumbnail = uuid + "." + ext;
-			cthumbFile.transferTo(new File("D:\\file\\" + cthumbnail));
-		} else {
-			cthumbnail = "";
-		}
-		if (!picFile.isEmpty()) {
-			String orgFileName = picFile.getOriginalFilename();
-			String ext = FilenameUtils.getExtension(orgFileName);
-			UUID uuid = UUID.randomUUID();
-			pic_content = uuid + "." + ext;
-			picFile.transferTo(new File("D:\\file\\" + pic_content));
-			System.out.println(picFile);
-		} else {
-			pic_content = "";
-		}
-
-		contentVO.setFile_name(file_name);
-		contentVO.setCthumbnail(cthumbnail);
-		contentVO.setPic_content(pic_content);
-		
-		contentService.classInsert(contentVO);
-		return "redirect:/";
-	}
+	
 
 	// 수정할 글 요청
 	@RequestMapping(value = "/edit/{cid}", method = RequestMethod.GET)
@@ -696,20 +899,19 @@ public class BoardController {
 		}
 	}
 	
-	// 관리자 페이지
-	@RequestMapping(value = "/changeMenu", method=RequestMethod.POST)
-    public String changeMenuUpload(@RequestParam(value="value")String value) {
-       System.out.println(value);
-       String value1 = "1";
-       String value2 = "2";
-       if(value.equals(value1)) {
-       return "board/write";
-       }
-       else if(value.equals(value2)) {
-       return "user";
-       }
-       return "managePage";
-    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
     
     @RequestMapping(value="/managePage")
     public String managePage() {

@@ -26,6 +26,7 @@ public class ContentVO {
 	private MultipartFile uploadFile;
 	private MultipartFile cthumbFile;
 	private MultipartFile picFile;
+	private String nickName;
 	
 	public ContentVO() {}
 
@@ -53,6 +54,7 @@ public class ContentVO {
 		this.uploadFile = uploadFile;
 		this.cthumbFile = cthumbFile;
 		this.picFile = picFile;
+		
 	}
 
 	public int getCid() {
@@ -206,7 +208,13 @@ public class ContentVO {
 	public void setPicFile(MultipartFile picFile) {
 		this.picFile = picFile;
 	}
+	public String getNickName() {
+		return nickName;
+	}
 
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
 	@Override
 	public String toString() {
 		return "ContentVO [cid=" + cid + ", big_name=" + big_name + ", small_name=" + small_name + ", uid=" + uid

@@ -6,14 +6,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>판매&관리자 로그인</title>
+<title>관리자 로그인</title>
 </head>
 <body>
-<%@ include file="/WEB-INF/views/vendor/menu.jsp" %>
-<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-판매자 혹은 관리자인 경우 로그인을 해주세요. 
+<div style="border: 1px solid #48BAE4; height: auto; width: 650px; text-align:center;">
+관리자 로그인을 해주세요. 
 	<form:form commandName="loginCommand">
-	<form:errors />
+	
 	<p>
 		<label>
 		Email :
@@ -34,12 +33,7 @@
 	<input type="submit" value="로그인">
 	</form:form>
 
-</main>
-
-
-	</div>
-	</div>
-	
+</div>
 
 </body>
 </html>

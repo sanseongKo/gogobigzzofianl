@@ -10,17 +10,17 @@
 </head>
 <body>
 
-	<%@ include file="/WEB-INF/views/vendor/menu.jsp" %>
+	<%@ include file="/WEB-INF/views/seller/menu.jsp" %>
 
 
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 
-<form action="/board/vendor/changeComplete" method="post">
+<form action="/board/seller/changeComplete" method="post">
 
 	<p>
 		<label>
-		이메일(변경불가) : ${authInfo.email}
-		</label> <input type="hidden" name="uid" value="${authInfo.uid}">
+		이메일(변경불가) : ${sessionId.email}
+		</label> <input type="hidden" name="uid" value="${sessionId.uid}">
 	</p>
 
 	<p>

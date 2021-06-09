@@ -9,6 +9,7 @@ import com.test.board.dao.MypageDao;
 import com.test.board.domain.ContentVO;
 import com.test.board.domain.MemberVO;
 import com.test.board.domain.OrderVO;
+import com.test.board.domain.ReplyList;
 import com.test.board.domain.ReplyVO;
 import com.test.board.domain.VendorVO;
 
@@ -29,7 +30,7 @@ public class MypageServiceImpl implements MypageService{
 	}
 
 	@Override
-	public List<ReplyVO> replyList(int uid) {
+	public List<ReplyList> replyList(int uid) {
 		// TODO Auto-generated method stub
 		return mypageDao.replyList(uid);
 	}
@@ -41,11 +42,11 @@ public class MypageServiceImpl implements MypageService{
 	}
 
 	@Override
-	public int replyDelete(int rid) {
-		// TODO Auto-generated method stub
-		return mypageDao.replyDelete(rid);
+	public void replyDelete(int rid) {
+		mypageDao.replyDelete(rid);
 	}
 
+	
 	//내 예약현황 가져오기
 	public List<OrderVO> orderAll(int cid){
 		return mypageDao.orderAll(cid);
@@ -66,9 +67,9 @@ public class MypageServiceImpl implements MypageService{
 	}
 
 	@Override
-	public String selectVendorPass(String email) {
+	public MemberVO vendorSelect(String email) {
 		// TODO Auto-generated method stub
-		return mypageDao.selectVendorPass(email);
+		return mypageDao.vendorSelect(email);
 	}
 
 	@Override

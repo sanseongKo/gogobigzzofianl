@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.test.board.domain.ContentVO;
+import com.test.board.domain.PageRow;
+import com.test.board.domain.RepCheck;
 import com.test.board.domain.ReplyList;
 import com.test.board.domain.ReplyVO;
 
@@ -94,13 +96,35 @@ public class ContentDaoImpl implements ContentDao{
 	public int delete(ContentVO contentVO) {
 		return sqlSessionTemplate.delete("delete", contentVO);
 	}
-
-
+	
+	@Override
+	public void uploadContent(ContentVO contentVO) {
+		sqlSessionTemplate.insert("upContent", contentVO);
+		
+	}
+	//판매물 삭제
+	@Override
+	public int delete(int cid) {
+		return sqlSessionTemplate.delete("deleteCon", cid);
+	}
+	//전체 판매 리스트
+	@Override
+	public List<ContentVO> manageList() {
+		
+		return sqlSessionTemplate.selectList("manageList");
+	}
+	//판매자별 판매 리스트
+	@Override
+	public List<ContentVO> manageListByVendor(String search) {
+		System.out.println("dao: " + search);
+		return sqlSessionTemplate.selectList("manageListByVendor", search);
+	}
 	// 댓글기능
 
+	// 페이징 startRow, endRow, cid 넘겨줌
 	@Override
-	public List<ReplyList> repList(int cid) {
-		return sqlSessionTemplate.selectList("repList", cid);
+	public List<ReplyList> repList(PageRow pageRow) {
+		return sqlSessionTemplate.selectList("repList", pageRow);
 	}
 
 	@Override
@@ -117,5 +141,14 @@ public class ContentDaoImpl implements ContentDao{
 	public int repDelete(int rid) {
 		return sqlSessionTemplate.delete("repDelete", rid);
 	}
+	@Override
+	public int repCount(int cid) {
+		return sqlSessionTemplate.selectOne("repCount", cid);
+	}
+	// 댓글 (본인 주문 상품에만 댓글 등록 가능) 
+	public int repCheck (RepCheck repCheck) {
+		return sqlSessionTemplate.selectOne("repCheck", repCheck);
+	}
+	
 
 }

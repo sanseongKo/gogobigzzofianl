@@ -22,19 +22,27 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.test.board.domain.ContentVO;
 import com.test.board.domain.MemberVO;
 import com.test.board.domain.OrderVO;
 import com.test.board.domain.PayProc;
 import com.test.board.domain.ResDTO;
 import com.test.board.service.BoardService;
+import com.test.board.service.ContentService;
 
-
+//결제 관련 컨트롤러
 @Controller
 public class PayController {
 	
+	
 	private BoardService boardService;
+	
+	@Autowired
+	private ContentService contentService;
+	
 	
 	@Autowired 
 	public PayController(BoardService boardService) {
@@ -287,26 +295,30 @@ public class PayController {
 	
 	
 	//첫 결제 클릭시 
-	@RequestMapping(value="/payStep1")
+	@RequestMapping(value="/payStep1", method=RequestMethod.POST )
 	public String payStep1(@ModelAttribute OrderVO OrderVO, Model model, HttpSession session) {
 		//1. session 안 객체 Member.uid 얻어오기 .
-		/*
-		MemberVO mem = (MemberVO) session.getAttribute("Member");
-		if (mem == null) {
-			return "payPage/needLogin";
-			
-		}
-		int uid= mem.getUid();
+		MemberVO sessionId = (MemberVO) session.getAttribute("sessionId");
 		//2. 주문테이블에 추가시켜줌																										// 결제 전 = 0
 		// 현재 ->  OrderVO: OrderVO [oid=null, uid= {mem.getUid()}, cid=6, amount=2200, quantity=1, paydate=null, resday=2021-06-05, state=0, title=가죽지갑]
-		OrderVO.setUid(uid); 
+		OrderVO.setUid(sessionId.getUid()); 
 
+		//cid로 content가져오기. 
+		ContentVO content = contentService.select(OrderVO.getCid());
+		
 		System.out.println("OrderVO: "+OrderVO.toString());
+		System.out.println("contentVO: "+ content.toString());
+	
 		model.addAttribute("OrderVO",OrderVO);
+		model.addAttribute("contentVO", content);
 		return "payPage/payStep1";
-		*/
-		return "payPage/needLogin";
 	}
+	
+	
+	
+	
+	
+	
 	
 	
 	

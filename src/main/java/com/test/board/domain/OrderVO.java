@@ -27,11 +27,28 @@ public class OrderVO {
 	private String resday;
 	private int state;
 	private String title;
+	private String deliver;
 	
 	
 	
 	
 	
+	public String getDeliver() {
+		return deliver;
+	}
+
+
+
+
+
+	public void setDeliver(String deliver) {
+		this.deliver = deliver;
+	}
+
+
+
+
+
 	public String getOid() {
 		return oid;
 	}
@@ -179,9 +196,13 @@ public class OrderVO {
 	@Override
 	public String toString() {
 		return "OrderVO [oid=" + oid + ", uid=" + uid + ", cid=" + cid + ", amount=" + amount + ", quantity=" + quantity
-				+ ", paydate=" + paydate + ", resday=" + resday + ", state=" + state + ", title=" + title + "]";
+				+ ", paydate=" + paydate + ", resday=" + resday + ", state=" + state + ", title=" + title + ", deliver="
+				+ deliver + "]";
 	}
-	
+
+
+
+
 	
 	
 	

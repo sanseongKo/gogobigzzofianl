@@ -8,7 +8,7 @@
 <title>클래스별주문현황step2</title>
 </head>
 <body>
-<%@ include file="/WEB-INF/views/vendor/menu.jsp" %>
+<%@ include file="/WEB-INF/views/seller/menu.jsp" %>
 
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 				<div class="container">

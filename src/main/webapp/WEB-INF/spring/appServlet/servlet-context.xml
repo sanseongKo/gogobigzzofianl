@@ -32,6 +32,7 @@
 		<beans:property name="maxUploadSize" value="52428800" />
 		<beans:property name="defaultEncoding" value="utf-8" />
 	</beans:bean>
+	
 	<!-- 썸네일 설정 -->
 	<!-- 업로드 패스 설정 --> 
 	<beans:bean class="java.lang.String" id="uploadPath">
@@ -45,8 +46,12 @@
 	<!-- 로그인 -->
 	<beans:bean id="naverLoginBO" class="com.test.board.login.NaverLoginBO" />
    <beans:bean id="kakaoService" class="com.test.board.login.KakaoService" />
+   <beans:bean id="loginDao" class="com.test.board.dao.LoginDaoImpl" />
+   
 	<!-- 회원가입 -->
 	<beans:bean id="registerDao" class="com.test.board.dao.RegisterDaoImpl" />
+	<beans:bean id="kakaoRegService" class="com.test.board.login.KakaoRegService" />
+	
 	<!-- controller 어노테이션만 스캔 -->
 	<context:component-scan base-package="com.test.board" >
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
@@ -54,10 +59,14 @@
 	
 	<mvc:interceptors>
 			<mvc:interceptor>
-				<mvc:mapping path="/vendor/**"/>
+				<mvc:mapping path="/manager/**"/> 
+				<mvc:mapping path="/seller/**"/>
+				<mvc:mapping path="/mypage/**"/>
 				<mvc:exclude-mapping path="/vendor/logout"/>
 				<beans:bean id="interceptorForExam" class="com.test.board.interceptor.AuthCheckInterceptor"> </beans:bean>
 		    </mvc:interceptor>
+		    
 	</mvc:interceptors>
+	<resources mapping="/image/**" location = "file:///C:/Study/images/"/>
 	
 </beans:beans>

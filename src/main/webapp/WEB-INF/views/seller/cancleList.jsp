@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<%@ include file="/WEB-INF/views/vendor/menu.jsp" %>
+<%@ include file="/WEB-INF/views/seller/menu.jsp" %>
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 <br>
 <h2>준비중입니다*^^*</h2>

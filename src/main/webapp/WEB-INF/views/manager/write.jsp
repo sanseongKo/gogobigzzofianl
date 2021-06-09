@@ -71,10 +71,7 @@
 					<th><label>제 목</label></th>
 					<td><input type="text" name="title" /></td>
 				</tr>
-				<tr>
-					<th><label>첨부파일</label></th>
-					<td><input type="file" name="uploadFile" multiple="multiple" /></td>
-				</tr>
+				
 				<tr>
 					<th><label>클래스 소개</label></th>
 					<td><textarea name="content" cols="40" rows="10"></textarea></td>
@@ -85,10 +82,6 @@
 				</tr>
 				
 				<tr>
-					<th><label>비디오썸네일사진</label></th>
-					<td><input type="text" name="vthumbnail" id="vImg"/></td>
-				</tr>
-				<tr>
 					<th><label>동영상</label></th>
 					<td><input type="text" name="video"/></td>
 				</tr>
@@ -97,11 +90,9 @@
 		
 		<div>
 				<label>썸네일 사진</label>
-					<input type="file" id="cImg" name="cthumbFile" />
+					<input type="file" id="cImg" multiple="multiple" name="file" />
 					<div class="select_img"><img src="" style="margin:20;"></div>
-				<label>클래스 사진</label>
-					<input type="file" id="pImg" name="picFile" />
-					<div class="select_img"><img src="" style="margin:20;"></div>
+				
 		</div>
 		
 		<div>

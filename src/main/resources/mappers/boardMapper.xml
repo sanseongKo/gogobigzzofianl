@@ -22,8 +22,8 @@
 	<!-- 주문 테이블 -->
 	
 	<insert id="insertOrder" parameterType="OrderVO">
-		insert into ORDER2 ("OID", "UID", "CID", "AMOUNT", "QUANTITY" , "RESDATE", "TITLE") 
-		values (#{oid}, #{uid}, #{cid}, #{amount}, #{quantity}, #{resdate}, #{title})
+		insert into ORDER2 ("OID", "UID", "CID", "AMOUNT", "QUANTITY" , "RESDAY", "TITLE", "DELIVER") 
+		values (#{oid}, #{uid}, #{cid}, #{amount}, #{quantity}, #{resday}, #{title}, #{deliver})
 	</insert>
 	
 	<!--  contents 테이블 -->
@@ -36,7 +36,7 @@
 	
 	
 	<!--  로그인시 이메일로 member객체 불러오기  -->
-	<select id="selectMember" parameterType="String" resultType="memberVO">
+	<select id="selectMember" parameterType="String" resultType="MemberVO">
 		select "UID", "NAME", "PASSWORD", "EMAIL", "PHONE", "VERIFICATION", "NICKNAME", "REGDATE"
 		from MEMBER WHERE "EMAIL" = #{email}
 	</select>
@@ -56,7 +56,10 @@
 		update ORDER2 set "STATE"=2 where "OID"=#{oid}
 	</update>
 	
-	
+	<!-- 이미지 처리 -->
+	<select id="imgList" parameterType="Integer" resultType="String">
+		select "VTHUMBNAIL" from "CONTENTS" where "CID" = #{cid}
+	</select>
 	
 	
 

@@ -75,7 +75,11 @@ public class BoardServiceImpl implements BoardService{
 	
 	
 	
-	
+	@Override
+	public String imgList(int cid) {
+		
+		return boardDao.imgList(cid);
+	}
 	
 	
 	

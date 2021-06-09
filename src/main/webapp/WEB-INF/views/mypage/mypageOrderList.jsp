@@ -8,6 +8,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
+
 <body>
 
 
@@ -20,13 +21,13 @@
 						<table border="1">
 
 	<tr>
-						<th>NO</th>
-						<th>구매상품</th>
-						<th>개수</th>
-						<th>결제금액</th>
-						<th>예약일자</th>
-						<th>구매일자</th>
-						<th>결제상태</th>
+						<th style="border: 1px solid #444444;">NO</th>
+						<th style="border: 1px solid #444444;">구매상품</th>
+						<th style="border: 1px solid #444444;">개수</th>
+						<th style="border: 1px solid #444444;">결제금액</th>
+						<th style="border: 1px solid #444444;">예약일자</th>
+						<th style="border: 1px solid #444444;">구매일자</th>
+						<th style="border: 1px solid #444444;">결제상태</th>
 					</tr>
 <div>
 	<% int count = 1; %>

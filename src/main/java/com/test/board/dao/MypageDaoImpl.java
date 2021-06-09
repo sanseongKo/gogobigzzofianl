@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.test.board.domain.ContentVO;
 import com.test.board.domain.MemberVO;
 import com.test.board.domain.OrderVO;
+import com.test.board.domain.ReplyList;
 import com.test.board.domain.ReplyVO;
 import com.test.board.domain.VendorVO;
 
@@ -35,11 +36,9 @@ public class MypageDaoImpl implements MypageDao{
 		
 	}
 	@Override
-	public String selectVendorPass(String email) {
-		System.out.println("selectVendorPass 시작 "+ email);
-		String pass = sqlSessionTemplate.selectOne("selectVendorPass", email);
-		System.out.println("pass: "+ pass);
-		return pass;
+	public MemberVO vendorSelect(String email) {
+	
+		return sqlSessionTemplate.selectOne("vendorSelect", email);
 	}
 	
 	@Override
@@ -64,7 +63,7 @@ public class MypageDaoImpl implements MypageDao{
 	
 	
 	
-	// 구매자마이페이지
+// 구매자마이페이지
 		@Override
 		public List<OrderVO> orderList(int uid) {
 			return sqlSessionTemplate.selectList("orderList", uid);
@@ -74,11 +73,11 @@ public class MypageDaoImpl implements MypageDao{
 		public List<OrderVO> cancleList(int uid) {
 			return sqlSessionTemplate.selectList("cancleList",uid);
 		}
-
+//나의 댓글 모아보기
 		@Override
-		public List<ReplyVO> replyList(int uid) {
-			// TODO Auto-generated method stub
-			return null;
+		public List<ReplyList> replyList(int uid) {
+			
+			return sqlSessionTemplate.selectList("replyList", uid);
 		}
 
 		@Override
@@ -88,9 +87,8 @@ public class MypageDaoImpl implements MypageDao{
 		}
 
 		@Override
-		public int replyDelete(int rid) {
-			// TODO Auto-generated method stub
-			return 0;
+		public void replyDelete(int rid) {
+			sqlSessionTemplate.delete("repDelete", rid);
 		}
 	
 		//구매자 정보 수정

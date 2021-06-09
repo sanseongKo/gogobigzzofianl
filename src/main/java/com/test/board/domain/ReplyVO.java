@@ -23,36 +23,61 @@ public class ReplyVO {
 		this.repdate = repdate;
 	}
 	
+	public ReplyVO(int uid, int cid, String repcontent) {
+		this.uid = uid;
+		this.cid = cid;
+		this.repcontent = repcontent;
+		
+	}
+
 	public int getRid() {
 		return rid;
 	}
+
 	public void setRid(int rid) {
 		this.rid = rid;
 	}
+
 	public int getUid() {
 		return uid;
 	}
+
 	public void setUid(int uid) {
 		this.uid = uid;
 	}
+
 	public int getCid() {
 		return cid;
 	}
+
 	public void setCid(int cid) {
 		this.cid = cid;
 	}
+
 	public String getRepcontent() {
 		return repcontent;
 	}
+
 	public void setRepcontent(String repcontent) {
 		this.repcontent = repcontent;
 	}
+
 	public Date getRepdate() {
 		return repdate;
 	}
+
 	public void setRepdate(Date repdate) {
 		this.repdate = repdate;
 	}
+
+	@Override
+	public String toString() {
+		return "ReplyVO [rid=" + rid + ", uid=" + uid + ", cid=" + cid + ", repcontent=" + repcontent + ", repdate="
+				+ repdate + "]";
+	}
+	
+	
+	
 	
 	
 }

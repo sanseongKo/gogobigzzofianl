@@ -3,6 +3,8 @@ package com.test.board.dao;
 import java.util.List;
 
 import com.test.board.domain.ContentVO;
+import com.test.board.domain.PageRow;
+import com.test.board.domain.RepCheck;
 import com.test.board.domain.ReplyList;
 import com.test.board.domain.ReplyVO;
 
@@ -37,15 +39,20 @@ public interface ContentDao {
 
 	// 판매글 삭제
 	public abstract int delete(ContentVO contentVO);
-
-
+	//컨텐츠 추가
+	public abstract void uploadContent(ContentVO contentVO);
+	//전체 판매 리스트
+	public abstract List<ContentVO> manageList();
+	//판매자별 판매 리스트
+	public abstract List<ContentVO> manageListByVendor(String search);
+	// 판매글 삭제
+	public abstract int delete(int cid);
 
 	// 댓글(후기) 기능
 
 	// 댓글 리스트
-	//public abstract List<ReplyVO> repList(int cid);
-	public abstract List<ReplyList> repList(int cid);
-	
+	// 페이징 startRow, endRow, cid 넘겨줌
+	public abstract List<ReplyList> repList(PageRow pageRow);
 
 	
 	// 댓글 입력
@@ -54,4 +61,11 @@ public interface ContentDao {
 	public abstract int repUpdate(ReplyVO replyVO);
 	// 댓글 삭제
 	public abstract int repDelete(int rid);
+	// 댓글 개수 
+	public abstract int repCount(int cid);
+	
+	// 댓글 (본인 주문 상품에만 댓글 등록 가능) 
+	public abstract int repCheck (RepCheck repCheck);
+	
+	
 }

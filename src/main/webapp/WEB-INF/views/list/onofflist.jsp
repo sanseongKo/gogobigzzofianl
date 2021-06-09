@@ -1,33 +1,33 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>온/오프 페이지</title>
+<title>ON / OFF LIST</title>
+<% int count =1; %>
 </head>
 <body>
-	<h1>온오프리스트</h1>
-
+	<h2>ON / OFF LIST</h2>
+	<c:choose>
+	<c:when test="${onCheck ==1}">
+		<h3>ON CLASS</h3>
+	</c:when>
+	<c:otherwise>
+		<h3>OFF CLASS</h3>
+	</c:otherwise>
+	</c:choose>
 	<a href="<c:url value="/" />">메인</a>
 
 	<div>
 		<a href="<c:url value="/onofflist?on_off=1" />">온라인</a> / <a
 			href="<c:url value="/onofflist?on_off=2" />">오프라인</a>
 	</div>
-
-	<br><br><a href="<c:url value="/write"/>">새글</a>
 	
-	<br><br>
-	<div>
-		<button name="login" onClick="location.href='<c:url value="/login"/>'">로그인</button>
-		<button name="logout"
-			onClick="location.href='<c:url value="/logout"/>'">로그아웃</button>
-		<button name="regForm"
-			onClick="location.href='<c:url value="/register"/>'">회원가입</button>
-	</div>
+
+	<%@ include file="/WEB-INF/views/list/loginCheck.jsp"%>
 	<br><br>
 
 	<div>
@@ -91,50 +91,46 @@
 			</ul>
 		</nav>
 	</div>
-
+<br><br>
 	<div>
-		<c:forEach var="board" items="${onofflist}" varStatus="loop">
-			<div style='width: 20%; float: left'>
-				<table border="1">
-					<c:choose>
-						<c:when test="${board.cthumbnail ne null}">
-							<tr>
-								<td><img src="${board.cthumbnail}" width=100 height=100></td>
-							</tr>
-						</c:when>
-						<c:otherwise>
-							<tr>
-								<td><img src="/board/resources/images/basicPic.jpg"
-									width=100 height=100></td>
-							</tr>
-						</c:otherwise>
-					</c:choose>
-					<tr>
-						<td>${board.cid}</td>
+	<c:forEach var="board" items="${onofflist}" varStatus="loop">
+      <div style='width: 20%; float: left'>
+         <table border="1">
+	         <c:choose>
+	         	<c:when test="${board.cthumbnail ne null}">
+	         		<tr>
+	            		<td><img src="<spring:url value="/image/${board.cthumbnail}"/>" style="width: 150px; height: 150px" /></td>
+	            	</tr>
+	         	</c:when>
+	         	<c:otherwise>
+	         		<tr>
+						<td><img src="/board/resources/images/basicPic.jpg" width=100 height=100></td>
 					</tr>
-					<tr>
-						<td><a href="<c:url value="/contentRead/${board.cid}" />">${board.title}
-						</a></td>
-					</tr>
-					<tr>
-						<td>${board.big_name}</td>
-					</tr>
-					<tr>
-						<td>${board.small_name}</td>
-					</tr>
-					<tr>
-						<td>${board.area}</td>
-					</tr>
+	         	</c:otherwise>
+	         </c:choose>
+            <tr>
+               <td><%= count++ %></td>
+            </tr>
+            <tr>
+               <td><a href="<c:url value="/contentRead/${board.cid}" />">${board.title}
+               </a></td>
+            </tr>
+            <tr>
+               <td>${board.big_name}</td>
+            </tr>
+            <tr>
+               <td>${board.small_name}</td>
+            </tr>
+            <tr>
+               <td>${board.area}</td>
+            </tr>
+            
+         </table>
+      </div>
+   </c:forEach>
+</div>
+	
 
-				</table>
-			</div>
-		</c:forEach>
-	</div>
-	
-	<div>
-		<a href="<c:url value="/write" />">새 글</a>
-	</div>
-	
 </body>
 
 </html>

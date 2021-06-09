@@ -8,7 +8,7 @@
 <title>클래스별주문현황step1</title>
 </head>
 <body>
-<%@ include file="/WEB-INF/views/vendor/menu.jsp" %>
+<%@ include file="/WEB-INF/views/seller/menu.jsp" %>
 
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 				<div class="container">
@@ -21,16 +21,16 @@
 					</tr>
 
 	<% int count = 1; %>
-		<c:forEach var="content" items="${list}" varStatus="loop">
+		<c:forEach var="OrderVO" items="${list}" varStatus="loop">
 			<div >
 
 					
 					<tr>
 						<td><%=count++ %></td>
 						
-						<td><a href="/board/vendor/resState/${content.cid}"> ${content.title}</a></td>
+						<td><a href="/board/seller/resState/${OrderVO.cid}"> ${OrderVO.title}</a></td>
 	
-						<td>${content.price}</td>
+						<td>${OrderVO.price}</td>
 						
 					</tr>
 

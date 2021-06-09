@@ -29,13 +29,16 @@ public class AuthCheckInterceptor extends HandlerInterceptorAdapter{
 		//false면 기존 session 불러오기
 		//true면 새로 session 생성
 		
-		if(session !=null) {
+		if(session !=null ) {
 			Object authInfo = session.getAttribute("authInfo");
-			if(authInfo !=null) {
+			Object sessionId = session.getAttribute("sessionId");
+			if(authInfo !=null ||sessionId != null) {
+
 				return true;
 			}
 		}
-		response.sendRedirect(request.getContextPath()+"/vendorLogin");
+		
+		response.sendRedirect(request.getContextPath()+"/");
 		return false;
 		
 	}

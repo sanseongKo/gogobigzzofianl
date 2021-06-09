@@ -29,9 +29,10 @@
 						<th>구매일자</th>
 						<th>결제상태</th>
 					</tr>
+<div>
 		<c:forEach var="cancle" items="${canclelist}" varStatus="loop">
-			<div>
-				<table border="1">
+	<div>
+			
 					
 					<tr>
 						<td><%=count++ %></td>
@@ -52,10 +53,9 @@
 			</div>
 		</c:forEach>
 				</table>
-				</div>
-				</div>
+				
 	</div>
-
+			</main>
 
 		
 		</div>

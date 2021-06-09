@@ -7,6 +7,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import com.test.board.domain.ContentVO;
 import com.test.board.domain.MemberVO;
 import com.test.board.domain.OrderVO;
+import com.test.board.domain.ReplyList;
 import com.test.board.domain.ReplyVO;
 import com.test.board.domain.VendorVO;
 
@@ -25,7 +26,7 @@ public interface MypageDao {
 	//판매자 마이페이지
 	public abstract int selectUID(String email);
 	
-	public abstract String selectVendorPass(String email);
+	public abstract MemberVO vendorSelect(String email);
 	
 	public abstract List<ContentVO> selectContents(int uid);
 	
@@ -38,12 +39,12 @@ public interface MypageDao {
 	public abstract void updateVendor(VendorVO vendorVO);
 	
 	
-	// 댓글 리스트
-	public abstract List<ReplyVO> replyList(int uid);
+	// 나의 후기 리스트
+	public abstract List<ReplyList> replyList(int uid);
 	// 댓글 수정
 	public abstract int replyUpdate(ReplyVO replyVO);
 	// 댓글 삭제
-	public abstract int replyDelete(int rid);
+	public abstract void replyDelete(int rid);
 	
 	
 	//구매자 정보 수정

@@ -9,11 +9,11 @@
 </head>
 <body>
 	
-	<%@ include file="/WEB-INF/views/vendor/menu.jsp" %>
+	<%@ include file="/WEB-INF/views/seller/menu.jsp" %>
 	<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 				
 	<br>
-	<h2> "${authInfo.email}"</h2>님의
+	<h2> "${sessionId.email}"</h2>님의
 		 정보수정 완료
 
 

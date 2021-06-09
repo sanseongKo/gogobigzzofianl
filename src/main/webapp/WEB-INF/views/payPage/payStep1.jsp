@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,7 +16,82 @@
 <title>paystep1</title>
 </head>
 <body>
-  	<button onclick="requestPay()"> 결제하기 </button> 
+
+
+	<!-- contetnts.on_off가 2이면 인원수체크, 금액 체크 -->
+	<c:choose>
+		<c:when test="${contentVO.on_off == 1}">
+		<div style="text-align:center">
+		<h2>오프라인 상품구매</h2>
+			<div style="border:1px solid #444444; margin-bottom:90px ;margin-left:500px ;margin-right:500px ;text-align:center;" >
+				상품명 : ${contentVO.title} <br>
+				수량 : ${OrderVO.quantity} 개 <br>
+				배송지 확인 : <input type="text" id="address" value="${sessionId.area}">
+			</div>
+			
+		
+
+				<h4>결제 금액</h4>
+			<h2>${OrderVO.amount} </h2> 
+			  	<button onclick="offDeliver()" style="font-size: 30px; padding: 30px 50px;"> 결제하기 </button> 
+		</div>
+	
+
+		
+		
+		</c:when>
+		<c:when test="${contentVO.on_off == 2}">
+		<div style="text-align:center">
+		<h2>오프라인 상품구매</h2>
+			<div style="border:1px solid #444444; margin-bottom:90px ;margin-left:500px ;margin-right:500px ;text-align:center;" >
+				상품명 : ${contentVO.title} <br>
+				인원 : ${OrderVO.quantity} 명 <br>
+				예약일 : ${OrderVO.resday} <br>
+
+			</div>
+			
+				<h4>결제 금액</h4>
+			<h2>${OrderVO.amount} </h2> 
+			  	<button onclick="onDeliver()" style="font-size: 30px; padding: 30px 50px;"> 결제하기 </button> 
+		</div>
+		</c:when>
+		
+		<c:otherwise>
+						잘못된 정보입니다. 
+		</c:otherwise>
+		
+		
+	</c:choose>
+
+
+
+
+<!--  ${contents.on_off}==1이면 고객 주소 확인 -->
+
+
+
+<script type="text/javascript">
+var deliver ='';
+
+function onDeliver() {
+	deliver = $(".address").val();
+	requestPay();
+}
+function offDeliver() {
+	deliver = '없음';
+	requestPay();
+}
+
+
+</script>
+
+
+
+
+
+
+
+  	
   	
 <script>
 /* 결제부분 script */
@@ -36,9 +112,9 @@ function requestPay() {
         merchant_uid : 'merchant_' + new Date().getTime(),
         name : '아이디어스결제',
         amount : '${OrderVO.amount}',
-        buyer_email : '${memberVO.email}',
-        buyer_name : '${memberVO.name}',
-        buyer_tel : '${memberVO.phone}'
+        buyer_email : '${sessionId.email}',
+        buyer_name : '${sessionId.name}'
+		
        // buyer_addr : '<!%=address%>',
        // buyer_postcode : '123-456',
         
@@ -58,7 +134,8 @@ function requestPay() {
     			amount: rsp.paid_amount,
     			quantity:'${OrderVO.quantity}',
     			resday: '${OrderVO.resday}',
-    			title: '${OrderVO.title}'
+    			title: '${OrderVO.title}',
+    			deliver: deliver
     			//resdate : lastResdate
     		}
     

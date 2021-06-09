@@ -5,9 +5,10 @@
 <meta charset="UTF-8">
 
 	
-<form action="/board/payStep1" method="post" onSubmit="goStep1(lastAmount)">
+<form action="/board/payStep1" method="post" id="payClick">
 <!-- <form action="${pageContext.request.contextPath}/reserveComplete" method="post"> -->
 <div class="reservation">
+<h2>결제정보</h2>
   	<p>예약일</p>
   	<input id="resday" name="resday" type="text" class="resday" placeholder="예약일 확인" required/>
   	<br>
@@ -27,7 +28,7 @@
 
 	결제금액  : <div id="pay" class="pay"></div>
 	<br><br>
-	<input type="submit" value="결제하기"/>
+	<input type="button" value="결제하기" onclick="payStart()"/>
 	
 	<input type="hidden" id="amount" name="amount" value="" />
 	<input type="hidden" id="cid" name="cid" value="${contentVO.cid}"/>
@@ -109,6 +110,21 @@ function onClick() {
 		});
 	}
 }	
+
+
+function payStart() {
+	if(sessionExist) {
+		goStep1(lastAmount);
+		document.getElementById('payClick').submit();
+		//$('payClick').form.submit();
+	}else {
+		alert('로그인이 필요한 서비스입니다. ');
+	}
+	
+
+	
+	
+}
 
 
 

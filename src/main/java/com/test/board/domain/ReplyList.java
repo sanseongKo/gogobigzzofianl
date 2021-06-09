@@ -11,20 +11,10 @@ public class ReplyList {
 	private String repcontent;
 	private Date repdate;
 	private String nickname;
+	private int rid;
+	private String title;
 	
 	public ReplyList() {}
-
-	
-	
-	public ReplyList(int uid, String repcontent, Date repdate, String nickname) {
-		super();
-		this.uid = uid;
-		this.repcontent = repcontent;
-		this.repdate = repdate;
-		this.nickname = nickname;
-	}
-
-
 
 	public int getUid() {
 		return uid;
@@ -57,8 +47,37 @@ public class ReplyList {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
+
+	public int getRid() {
+		return rid;
+	}
+
+	public void setRid(int rid) {
+		this.rid = rid;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public ReplyList(int uid, String repcontent, Date repdate, String nickname, int rid, String title) {
+		super();
+		this.uid = uid;
+		this.repcontent = repcontent;
+		this.repdate = repdate;
+		this.nickname = nickname;
+		this.rid = rid;
+		this.title = title;
+	}
+
 	
 	
+	
+
 	
 
 	

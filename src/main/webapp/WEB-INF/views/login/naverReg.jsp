@@ -13,8 +13,8 @@
 			<c:when test="${sessionId != null}">
 				<div>이메일</div>
 				<div>
-					<input name="email" value="${email}" disabled="disabled">
-					<input type="hidden" name="email" value="${email}">
+					<input name="email" value="${sessionId}" disabled="disabled">
+					<input type="hidden" name="email" value="${sessionId}">
 				</div>
 				<div>이름</div>
 				<div>
